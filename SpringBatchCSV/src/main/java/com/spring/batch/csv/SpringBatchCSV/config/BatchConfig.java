@@ -6,7 +6,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
@@ -31,6 +30,7 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.oxm.xstream.XStreamMarshaller;
 
+import com.spring.batch.csv.SpringBatchCSV.config.writers.OrderExcelWriter;
 import com.spring.batch.csv.SpringBatchCSV.config.writers.OrderTextWriter;
 import com.spring.batch.csv.SpringBatchCSV.model.Order;
 import com.spring.batch.csv.SpringBatchCSV.processor.OrderLogProceseeor;
@@ -48,10 +48,7 @@ public class BatchConfig {
 	@Value("${spring.datasource.chunk}")
 	int chunk;
 
-	   @Bean
-	    public SXSSFWorkbook workbook() {
-	        return new SXSSFWorkbook(chunk);
-	    }
+	
 	
 	@Bean
 	public Job readCsvJob() throws Exception{
@@ -112,6 +109,7 @@ public class BatchConfig {
 		itemWriters.add(txtFileItemWriter());
 		itemWriters.add(jsonFileItemWriter());
 		itemWriters.add(xmlFileItemWriter());
+		itemWriters.add(new OrderExcelWriter());
 		
 		compositeItemWriter.setDelegates(itemWriters);
 		compositeItemWriter.afterPropertiesSet();
@@ -166,6 +164,7 @@ public class BatchConfig {
 
 		return staxEventItemWriter;
 	}
+
 
 	 
 	
