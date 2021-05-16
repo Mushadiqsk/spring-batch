@@ -55,11 +55,11 @@ public class BatchConfig {
 		
 		return jobBuilderFactory.get("readOrderCSV")
 				.incrementer(new RunIdIncrementer())
-				.start(step())
+				.start(readOrderCSVStep())
 				.build();
 	}
 
-	private Step step() throws Exception{
+	private Step readOrderCSVStep() throws Exception{
 			return stepBuilderFactory.get("step")
 					.<Order,Order> chunk(chunk)
 					.reader(orderCSVReader())
@@ -109,7 +109,7 @@ public class BatchConfig {
 		itemWriters.add(txtFileItemWriter());
 		itemWriters.add(jsonFileItemWriter());
 		itemWriters.add(xmlFileItemWriter());
-		itemWriters.add(new OrderExcelWriter());
+		itemWriters.add(new OrderExcelWriter(chunk));
 		
 		compositeItemWriter.setDelegates(itemWriters);
 		compositeItemWriter.afterPropertiesSet();
@@ -131,6 +131,8 @@ public class BatchConfig {
 
 		return orderTextWriter;
 	}
+	
+	
 
 	@Bean
 	public OrderTextWriter<Order> jsonFileItemWriter() throws Exception {
